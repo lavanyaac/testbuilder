@@ -7,12 +7,86 @@
 //   1. The first few numbers (called the prefix)
 //   2. The number of digits in the number (called the length)
 
-var detectNetwork = function(cardNumber) {
-  // Note: `cardNumber` will always be a string
-  // The Diner's Club network always starts with a 38 or 39 and is 14 digits long
-  // The American Express network always starts with a 34 or 37 and is 15 digits long
+function detectNetwork(cardNumber){
+	switch(true){
+		case(isDiners(cardNumber)):
+			return "Diner\'s Club";
+		case(isAmex(cardNumber)):
+			return "American Express";
+		case(isMaster(cardNumber)):
+			return "MasterCard";
+		case(isSwitch(cardNumber)):
+			return "Switch";
+		case(isVisa(cardNumber)):
+			return "Visa";
+		case(isDiscover(cardNumber)):
+			return "Discover";
+		case(isMaestro(cardNumber)):
+			return "Maestro";
+		case(isChinaUnionPay(cardNumber)):
+			return "China UnionPay";
+		default:
+			return("Unknown card network")
+	}
 
-  // Once you've read this, go ahead and try to implement this function, then return to the console.
-};
+}
+function isDiners(cCard){
+	return (cCard.length === 14 && (['38', '39'].includes(cCard.slice(0,2))))
+}
 
+function isAmex(cCard){
+	return (cCard.length === 15 && (['34', '37'].includes(cCard.slice(0,2))))
+}
 
+function isMaster(cCard){
+	return (cCard.length === 16 && (['51', '52', '53', '54', '55'].includes(cCard.slice(0,2))))
+}
+
+function isSwitch(cCard){
+	var isSwitchCard = false;
+	cardPrefix = ['4903', '4905', '4911', '4936', '564182', '633110', '6333', '6759'];
+	if([16, 18, 19].includes(cCard.length)){
+		isSwitchCard = cardPrefix.some(function(prefix){
+			return (cCard.startsWith(prefix))
+		});
+	}
+	return isSwitchCard;
+}
+
+function isVisa(cCard){
+	return (([13,16, 19].includes(cCard.length))&& (cCard.startsWith('4')))
+}
+
+function isDiscover(cCard){
+	var isDiscoverCard = false;
+	cardPrefix = ['6011', '644', '645', '646', '647', '648', '649', '65'];
+	if([16, 19].includes(cCard.length)){
+		isDiscoverCard = cardPrefix.some(function(prefix){
+			return (cCard.startsWith(prefix))
+		});
+	}
+	return isDiscoverCard;
+}
+
+function isMaestro(cCard){
+	return (['5018', '5020', '5038', '6304'].includes(cCard.slice(0,4)) && (cCard.length >= 12 && cCard.length <= 19))
+}
+
+function isChinaUnionPay(cCard){
+	var isCUnionPay = false;
+	if([16, 17, 18, 19].includes(cCard.length)){
+		cardPrefix = ['624', '625', '626','6282', '6283', '6284', '6285', '6286', '6287', '6288'];
+		isCUnionPay = cardPrefix.some(function(prefix){
+			return (cCard.startsWith(prefix));
+		});
+		if(!isCUnionPay){
+			cardPrefix = Number(cCard.slice(0,6))
+			if(cardPrefix >= 622126 && cardPrefix <= 622925){
+				isCUnionPay = true;
+			}
+		}
+	}
+	return isCUnionPay;
+}
+
+//console.log(detectNetwork("344444444444444"))
